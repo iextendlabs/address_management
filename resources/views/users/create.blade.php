@@ -57,5 +57,4 @@
     </div>
 </div>
 {!! Form::close() !!}
-<p class="text-center text-primary"><small>By iextendlabs.com</small></p>
 @endsection

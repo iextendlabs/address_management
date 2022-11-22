@@ -43,5 +43,4 @@
     @endforeach
 </table>
 {!! $roles->render() !!}
-<p class="text-center text-primary"><small>By iextendlabs.com</small></p>
 @endsection

@@ -31,3 +31,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('profiles', ProfileController::class);
 });
+
+Route::post('/filter',[ProfileController::class,'filter']);

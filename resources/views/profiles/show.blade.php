@@ -109,6 +109,12 @@
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
+                <strong>Suburb:</strong>
+                {{ $address->suburb }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
                 <strong>City \ Town:</strong>
                 {{ $address->city_town }}
             </div>

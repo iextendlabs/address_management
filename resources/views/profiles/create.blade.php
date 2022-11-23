@@ -57,6 +57,7 @@
                 <div class="form-group">
                     <strong>Gender:</strong>
                     <select name="gender" id="gender" class="form-control" >
+                        <option></option>
                         <option value="1">Male</option>
                         <option value="0">Female</option>
                     </select>
@@ -65,7 +66,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Department Number:</strong>
-                    <input type="text" name="departmentNumber" value="{{ old('departmentNumber') }}" class="form-control" placeholder="Department Number">
+                    <input type="number" name="departmentNumber" value="{{ old('departmentNumber') }}" class="form-control" placeholder="Department Number">
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -83,7 +84,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Phone (Work):</strong>
-                    <input type="text" name="phoneWork" value="{{ old('phoneWork') }}" class="form-control" placeholder="Phone (Work)">
+                    <input type="number" name="phoneWork" value="{{ old('phoneWork') }}" class="form-control" placeholder="Phone (Work)">
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -116,6 +117,12 @@
                 <div class="form-group">
                     <strong>Street:</strong>
                     <input type="text" name="street" value="{{ old('street') }}" class="form-control" placeholder="Street">
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Suburb:</strong>
+                    <input type="text" name="suburb" value="{{ old('suburb') }}" class="form-control" placeholder="Suburb">
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">

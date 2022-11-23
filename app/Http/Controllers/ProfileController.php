@@ -28,9 +28,75 @@ class ProfileController extends Controller
      */
     public function index()
         {
+            $fields = array(
+                'firstName' => 'First Name',
+                'lastName' => 'Last Name',
+                'jobTitle' => 'Job Title',
+                'company' => 'Company',
+                'employeeNumber' => 'Employee Number',
+                'departmentNumber' => 'Department Number',
+                'department' => 'Department',
+                'phoneMobile' => 'Phone (Mobile)',
+                'phoneWork' => 'Phone (Work)',
+                'email' => 'Email',
+                'workgroup' => 'Workgroup',
+                'prefix' => 'Prefix',
+                'number' => 'Number',
+                'street' => 'Street',
+                'suburb' => 'Suburb',
+                'city_town' => 'City \ Town',
+                'country' => 'Country',
+                'postcode_zipcode' => 'Postcode \ ZipCode',
+            );
+            
             $profiles = Profile::latest()->paginate(5);
-            return view('profiles.index',compact('profiles'))
+            return view('profiles.index',compact('profiles','fields'))
                 ->with('i', (request()->input('page', 1) - 1) * 5);
+        }
+
+    //  Filter Profiles 
+
+    public function filter(Request $request)
+        {
+
+            $fields = array(
+                'firstName' => 'First Name',
+                'lastName' => 'Last Name',
+                'jobTitle' => 'Job Title',
+                'company' => 'Company',
+                'employeeNumber' => 'Employee Number',
+                'departmentNumber' => 'Department Number',
+                'department' => 'Department',
+                'phoneMobile' => 'Phone (Mobile)',
+                'phoneWork' => 'Phone (Work)',
+                'email' => 'Email',
+                'workgroup' => 'Workgroup',
+                'prefix' => 'Prefix',
+                'number' => 'Number',
+                'street' => 'Street',
+                'suburb' => 'Suburb',
+                'city_town' => 'City \ Town',
+                'country' => 'Country',
+                'postcode_zipcode' => 'Postcode \ ZipCode',
+            );
+
+            $query = DB::table('profiles')
+            ->leftJoin('addresses', 'profiles.id', '=', 'addresses.profile_id');
+
+            if(isset($request->field) || isset($request->value)){
+                $query->where($request->field ,'like',$request->value.'%');
+            }
+
+            $profiles = $query->paginate(5);
+            
+            $old_data = [
+                'field' => $request->field,
+                'value' => $request->value,
+            ];
+
+            return view('profiles.index',compact('profiles','old_data','fields'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+            
         }
     
     /**
@@ -54,6 +120,19 @@ class ProfileController extends Controller
             request()->validate([
                 'firstName' => 'required',
                 'lastName' => 'required',
+                'jobTitle' => 'required',
+                'company' => 'required',
+                'employeeNumber' => 'required',
+                'departmentNumber' => 'required',
+                'department' => 'required',
+                'phoneMobile' => 'required',
+                'email' => 'required',
+                'number' => 'required',
+                'street' => 'required',
+                'city_town' => 'required',
+                'country' => 'required',
+                'postcode_zipcode' => 'required',
+                'suburb' => 'required',
             ]);
         
             $profile = Profile::create($request->all());
@@ -64,6 +143,7 @@ class ProfileController extends Controller
             $address->prefix = $request->prefix;
             $address->number = $request->number;
             $address->street = $request->street;
+            $address->suburb = $request->suburb;
             $address->city_town = $request->city_town;
             $address->country = $request->country;
             $address->postcode_zipcode = $request->postcode_zipcode;
@@ -112,6 +192,19 @@ class ProfileController extends Controller
             request()->validate([
                 'firstName' => 'required',
                 'lastName' => 'required',
+                'jobTitle' => 'required',
+                'company' => 'required',
+                'employeeNumber' => 'required',
+                'departmentNumber' => 'required',
+                'department' => 'required',
+                'phoneMobile' => 'required',
+                'email' => 'required',
+                'number' => 'required',
+                'street' => 'required',
+                'city_town' => 'required',
+                'country' => 'required',
+                'postcode_zipcode' => 'required',
+                'suburb' => 'required',
             ]);
         
             $profile->update($request->all());
@@ -122,6 +215,7 @@ class ProfileController extends Controller
             $address->prefix = $request->prefix;
             $address->number = $request->number;
             $address->street = $request->street;
+            $address->suburb = $request->suburb;
             $address->city_town = $request->city_town;
             $address->country = $request->country;
             $address->postcode_zipcode = $request->postcode_zipcode;

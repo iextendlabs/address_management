@@ -15,13 +15,14 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('profile_id');
-            $table->string('prefix');
-            $table->string('number');
-            $table->string('street');
-            $table->string('city_town');
-            $table->string('country');
-            $table->string('postcode_zipcode');
+            $table->string('profile_id')->nullable();
+            $table->string('prefix')->nullable();
+            $table->string('number')->nullable();
+            $table->string('suburb')->nullable();
+            $table->string('street')->nullable();
+            $table->string('city_town')->nullable();
+            $table->string('country')->nullable();
+            $table->string('postcode_zipcode')->nullable();
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@
                 <a class="btn btn-primary" href="{{ route('profiles.index') }}"> Back</a>
             </div>
         </div>
-    </div>
+    </div><hr>
     @if ($errors->any())
         <div class="alert alert-danger">
             <strong>Whoops!</strong> There were some problems with your input.<br><br>

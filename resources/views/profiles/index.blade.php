@@ -11,7 +11,7 @@
                 @endcan
             </div>
         </div>
-    </div>
+    </div><hr>
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -42,6 +42,7 @@
                             @can('profile-delete')
                             <button type="submit" class="btn btn-danger">Delete</button>
                             @endcan
+                            <a class="btn btn-primary" href="sms/{{ $profile->id }}">SMS</a>
                         </form>
                     </td>
                 </tr>

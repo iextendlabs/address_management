@@ -9,7 +9,7 @@
             <a class="btn btn-primary" href="{{ route('roles.index') }}"> Back</a>
         </div>
     </div>
-</div>
+</div><hr>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">

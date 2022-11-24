@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'clicksend' => [
+        'username' => env('saqib@iextendlabs.com'),
+        'api_key' => env('7D6BFD75-6571-1773-BB50-C20BBA8CBE7F'),
+    ],
+
+
 ];

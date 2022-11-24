@@ -9,7 +9,7 @@
             <a class="btn btn-primary" href="{{ route('roles.index') }}"> Back</a>
         </div>
     </div>
-</div>
+</div><hr>
 @if (count($errors) > 0)
     <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with your input.<br><br>

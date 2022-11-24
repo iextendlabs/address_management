@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
     
 use App\Models\Profile;
 use App\Models\Addresses;
+use App\Models\sms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use ClickSend;
     
 class ProfileController extends Controller
 { 
@@ -239,5 +241,64 @@ class ProfileController extends Controller
         
             return redirect()->route('profiles.index')
                             ->with('success','profile deleted successfully');
+        }
+    // Display a listing of the sms.
+    public function sms($id)
+        {
+            $profile = Profile::find($id);
+
+            $sms = DB::table('sms')->where('profile_id', $id)->orderBy('created_at', 'desc')->get();
+
+            return view('profiles.sms',compact('profile','sms'));
+        }
+    // Send sms.
+    public function sendSMS(Request $request)
+        {
+
+            request()->validate([
+                'message' => 'required',
+            ]);
+
+            $sms = new sms;
+            
+            // Configure HTTP basic authorization: BasicAuth
+            $config = ClickSend\Configuration::getDefaultConfiguration()
+                        ->setUsername(env("CLICKSEND_USERNAME"))
+                        ->setPassword(env("CLICKSEND_API_KEY"));
+
+            $apiInstance = new ClickSend\Api\SMSApi(new \GuzzleHttp\Client(),$config);
+            $msg = new \ClickSend\Model\SmsMessage();
+            $msg->setBody($request->message); 
+            $msg->setTo($request->number);
+            $msg->setSource("sdk");
+            // \ClickSend\Model\SmsMessageCollection | SmsMessageCollection model
+            $sms_messages = new \ClickSend\Model\SmsMessageCollection(); 
+            $sms_messages->setMessages([$msg]);
+
+            try {
+                $result = $apiInstance->smsSendPost($sms_messages);
+
+                $status = json_decode($result)->data->messages['0']->status;
+
+                $sms->profile_id = $request->profile_id;
+                $sms->body = $request->message;
+                if($status == 'SUCCESS'){
+                    $sms->status = 'success';
+                }else{
+                    $sms->status = 'fail';
+                }
+                $sms->save();
+
+                if($status == 'SUCCESS'){
+                    return back()->with('success','Message successfully Send.');
+                }else{
+                    return back()->with('fail','Something went wrong.');
+                }
+            } catch (Exception $e) {
+                echo 'Exception when calling SMSApi->smsSendPost: ', $e->getMessage(), PHP_EOL;
+            }
+
+
+            
         }
 }

@@ -35,3 +35,4 @@ Route::group(['middleware' => ['auth']], function() {
 Route::post('/filter',[ProfileController::class,'filter']);
 Route::get('/sms/{id}',[ProfileController::class,'sms']);
 Route::post('sendSMS',[ProfileController::class,'sendSMS']);
+Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);

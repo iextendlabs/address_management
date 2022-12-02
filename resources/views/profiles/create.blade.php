@@ -78,13 +78,13 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Phone (Mobile):</strong>
-                    <input type="number" name="phoneMobile" value="{{ old('phoneMobile') }}" class="form-control" placeholder="Phone (Mobile)">
+                    <input type="text" name="phoneMobile" value="{{ old('phoneMobile') }}" class="form-control" placeholder="Phone (Mobile)">
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Phone (Work):</strong>
-                    <input type="number" name="phoneWork" value="{{ old('phoneWork') }}" class="form-control" placeholder="Phone (Work)">
+                    <input type="text" name="phoneWork" value="{{ old('phoneWork') }}" class="form-control" placeholder="Phone (Work)">
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">

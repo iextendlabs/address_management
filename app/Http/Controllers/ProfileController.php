@@ -7,8 +7,9 @@ use App\Models\Addresses;
 use App\Models\sms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use ClickSend;
-    
+use Twilio\Rest\Client;
+use Twilio\TwiML\MessagingResponse;
+
 class ProfileController extends Controller
 { 
     /**
@@ -238,6 +239,8 @@ class ProfileController extends Controller
             $profile->delete();
 
             DB::table('addresses')->where('profile_id', $profile->id)->delete();
+
+            DB::table('sms')->where('profile_id', $profile->id)->delete();
         
             return redirect()->route('profiles.index')
                             ->with('success','profile deleted successfully');
@@ -247,11 +250,11 @@ class ProfileController extends Controller
         {
             $profile = Profile::find($id);
 
-            $sms = DB::table('sms')->where('profile_id', $id)->orderBy('created_at', 'desc')->get();
+            $sms = DB::table('sms')->where('profile_id', $id)->orderBy('created_at', 'desc')->latest()->paginate(5);;
 
             return view('profiles.sms',compact('profile','sms'));
         }
-    // Send sms.
+
     public function sendSMS(Request $request)
         {
 
@@ -260,45 +263,51 @@ class ProfileController extends Controller
             ]);
 
             $sms = new sms;
-            
-            // Configure HTTP basic authorization: BasicAuth
-            $config = ClickSend\Configuration::getDefaultConfiguration()
-                        ->setUsername(env("CLICKSEND_USERNAME"))
-                        ->setPassword(env("CLICKSEND_API_KEY"));
-
-            $apiInstance = new ClickSend\Api\SMSApi(new \GuzzleHttp\Client(),$config);
-            $msg = new \ClickSend\Model\SmsMessage();
-            $msg->setBody($request->message); 
-            $msg->setTo($request->number);
-            $msg->setSource("sdk");
-            // \ClickSend\Model\SmsMessageCollection | SmsMessageCollection model
-            $sms_messages = new \ClickSend\Model\SmsMessageCollection(); 
-            $sms_messages->setMessages([$msg]);
 
             try {
-                $result = $apiInstance->smsSendPost($sms_messages);
-
-                $status = json_decode($result)->data->messages['0']->status;
+                $account_sid = getenv("TWILIO_SID");
+                $auth_token = getenv("TWILIO_AUTH_TOKEN");
+                $twilio_number = getenv("TWILIO_NUMBER");
+                $client = new Client($account_sid, $auth_token);
+                $client->messages->create($request->number, 
+                    ['from' => $twilio_number, 'body' => $request->message] );
 
                 $sms->profile_id = $request->profile_id;
                 $sms->body = $request->message;
-                if($status == 'SUCCESS'){
-                    $sms->status = 'success';
-                }else{
-                    $sms->status = 'fail';
-                }
+                $sms->status = 'success';
+                $sms->type = 'send';
                 $sms->save();
 
-                if($status == 'SUCCESS'){
-                    return back()->with('success','Message successfully Send.');
-                }else{
-                    return back()->with('fail','Something went wrong.');
-                }
-            } catch (Exception $e) {
-                echo 'Exception when calling SMSApi->smsSendPost: ', $e->getMessage(), PHP_EOL;
+                return back()->with('success','Message successfully Send.');
+            } catch (\Exception $e) {
+                
+                $sms->profile_id = $request->profile_id;
+                $sms->body = $request->message;
+                $sms->status = 'fail';
+                $sms->type = 'send';
+                $sms->save();
+
+                return back()->with('fail','The number is unverified.');
             }
 
-
             
+        }
+        
+    public function receiveSMS(Request $request)
+        {
+
+            $sms = new sms;
+
+            $response = new MessagingResponse();
+
+            $profile = Profile::where('phoneMobile',$request->From)->first();
+            
+            $sms->profile_id = $profile->id;
+            $sms->body = $request->Body;
+            $sms->status = 'success';
+            $sms->type = $request->SmsStatus;
+            $sms->save();
+
+            $response->message('Your SMS successfully send.');
         }
 }

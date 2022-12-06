@@ -14,13 +14,38 @@
     </div><hr>
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
-            <p>{{ $message }}</p>
+            <span>{{ $message }}</span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if ($message = Session::get('fail'))
+        <div class="alert alert-danger">
+            <span>{{ $message }}</span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <form action="{{url('/groupSMS')}}" method="POST" id="sms" class="form-group">
+    <div id="smsButton" style="display:none; padding: 10px;">
+        <textarea name="message" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 100px; width: 500px;"></textarea>
+        <button type="submit" form="sms" class="btn btn-info" style="margin: 15px;">SMS</button>
+    </div>
     <div class="row">
         <div class="col-lg-9 margin-tb">
+            @csrf
             <table class="table table-bordered">
                 <tr>
+                    @can('profile-sms')<th></th>@endcan
                     <th>No</th>
                     <th>First Name</th>
                     <th>Last Name</th>
@@ -28,26 +53,31 @@
                 </tr>
                 @foreach ($profiles as $profile)
                 <tr>
+                    @can('profile-sms')
+                    <th>
+                        <input type="checkbox" name="ids[{{ $i }}]" class="smsId" value="{{ $profile->id }}">
+                    </th>
+                    @endcan
                     <td>{{ ++$i }}</td>
                     <td>{{ $profile->firstName }}</td>
                     <td>{{ $profile->lastName }}</td>
                     <td>
-                        <form action="{{ route('profiles.destroy',$profile->id) }}" method="POST">
-                            <a class="btn btn-info" href="{{ route('profiles.show',$profile->id) }}">Show</a>
+                            <a class="btn btn-info" href="{{ route('profiles.destroy',$profile->id) }}">Show</a>
                             @can('profile-edit')
                             <a class="btn btn-primary" href="{{ route('profiles.edit',$profile->id) }}">Edit</a>
                             @endcan
                             @csrf
-                            @method('DELETE')
                             @can('profile-delete')
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a class="btn btn-danger" href="profileDestroy/{{$profile->id }}">Delete</a>
                             @endcan
+                            @can('profile-sms')
                             <a class="btn btn-primary" href="sms/{{ $profile->id }}">SMS</a>
-                        </form>
+                            @endcan
                     </td>
                 </tr>
                 @endforeach
             </table>
+            </form>
         </div>
         <div class="col-lg-3 margin-tb" style="border: 1px solid #dee2e6; border-radius: 10px; padding-top: 10px; ">
             <form action="{{url('/filter')}}" method="POST" id="filter">
@@ -83,4 +113,11 @@
         </div>
     </div>
     {!! $profiles->links() !!}
+<script>
+    $(document).ready(function(){
+    $(".smsId").click(function(){
+        $('#smsButton').css('display','inline')
+    });
+    });
+</script>
 @endsection

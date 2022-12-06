@@ -27,6 +27,7 @@ class PermissionTableSeeder extends Seeder
             'role-edit',
             'role-delete',
             'profile-list',
+            'profile-sms',
             'profile-create',
             'profile-edit',
             'profile-delete'

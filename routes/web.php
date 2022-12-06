@@ -31,8 +31,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('profiles', ProfileController::class);
 });
-
+Route::get('/profileDestroy/{id}',[ProfileController::class,'destroy']);
 Route::post('/filter',[ProfileController::class,'filter']);
 Route::get('/sms/{id}',[ProfileController::class,'sms']);
 Route::post('sendSMS',[ProfileController::class,'sendSMS']);
 Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);
+Route::post('groupSMS', [ProfileController::class, 'groupSMS']);

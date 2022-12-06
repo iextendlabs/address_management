@@ -9,16 +9,19 @@
     </div><hr>
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
-            <p>{{ $message }}</p>
+            <span>{{ $message }}</span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
     @if ($message = Session::get('fail'))
         <div class="alert alert-danger">
-            <p>{{ $message }}</p>
+            <span>{{ $message }}</span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
     @if ($errors->any())
         <div class="alert alert-danger">
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
             <strong>Whoops!</strong> There were some problems with your input.<br><br>
             <ul>
                 @foreach ($errors->all() as $error)
@@ -27,21 +30,25 @@
             </ul>
         </div>
     @endif
-    <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6">
-            @if(isset($sms))
-                @foreach($sms as $single_sms)
-                    <textarea style="height: 160px; width: 90%;" class="form-control" disabled>{{ $single_sms->body }}</textarea>
-                    @if($single_sms->status == 'success')
-                        <span class="alert alert-success" style="--bs-alert-padding-y:0.5rem">Successfully send</span>
-                    @else
-                        <span class="alert alert-danger" style="--bs-alert-padding-y:0.5rem">Failed to send</span>
-                    @endif
-                    <span class="float-end">{{ $single_sms->created_at }}</span><br><br>
-                @endforeach
-            @endif
+    @if(isset($sms))
+        @foreach($sms as $single_sms)
+        @if($single_sms->type == "send")
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <textarea style="height: 160px; width: 90%; background-color: #ffffff;" class="form-control" disabled>{{ $single_sms->body }}</textarea>
+                <span class="float-end">{{ $single_sms->created_at }}</span><br><br>
+            </div>
         </div>
-    </div>
+        @elseif($single_sms->type == "receive")
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6" style="margin-left:500px ;">
+                <textarea style="height: 160px; width: 90%; background-color: #d9fdd3;" class="form-control" disabled>{{ $single_sms->body }}</textarea>
+                <span class="float-end">{{ $single_sms->created_at }}</span><br><br>
+            </div>
+        </div>
+        @endif
+        @endforeach
+    @endif
     <form action="{{url('/sendSMS')}}" method="POST">
         @csrf
          <div class="row">

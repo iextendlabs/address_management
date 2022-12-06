@@ -12,6 +12,7 @@
 </div><hr>
 @if (count($errors) > 0)
     <div class="alert alert-danger">
+        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         <strong>Whoops!</strong> There were some problems with your input.<br><br>
         <ul>
             @foreach ($errors->all() as $error)

@@ -7,7 +7,10 @@
             </div>
             <div class="pull-right" style="margin-bottom: 15px !important;">
                 @can('profile-create')
-                <a class="btn btn-success" href="{{ route('profiles.create') }}"> Create New Profile</a>
+                    <a class="btn btn-success" href="{{ route('profiles.create') }}"> Create New Profile</a>
+                @endcan
+                @can('profile-sms')
+                    <a class="btn btn-primary" href="{{url('/inbox')}}">Inbox</a>
                 @endcan
             </div>
         </div>
@@ -78,6 +81,7 @@
                 @endforeach
             </table>
             </form>
+            {!! $profiles->links() !!}
         </div>
         <div class="col-lg-3 margin-tb" style="border: 1px solid #dee2e6; border-radius: 10px; padding-top: 10px; ">
             <form action="{{url('/filter')}}" method="POST" id="filter">
@@ -112,7 +116,7 @@
             </form>
         </div>
     </div>
-    {!! $profiles->links() !!}
+    
 <script>
     $(document).ready(function(){
     $(".smsId").click(function(){

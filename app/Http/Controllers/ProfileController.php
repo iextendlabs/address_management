@@ -320,4 +320,23 @@ class ProfileController extends Controller
         }
         return back()->with('success','Message successfully Send.');
     }
+
+    public function inbox(){
+        $data = array();
+        $profiles = Profile::all();
+
+        foreach($profiles as $profile){
+            $sms = sms::where('profile_id',$profile->id)->latest()->first();
+            if(isset($sms)){
+                $data[] = array(
+                    'profile_id'     =>$profile->id,
+                    'profile'        => $profile->firstName.' '.$profile->lastName,
+                    'sms'            => $sms->body
+                );
+            }
+            
+        }
+        
+        return view('profiles.inbox',compact('data'));
+    }
 }

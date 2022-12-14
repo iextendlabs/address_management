@@ -37,3 +37,4 @@ Route::get('/sms/{id}',[ProfileController::class,'sms']);
 Route::post('sendSMS',[ProfileController::class,'sendSMS']);
 Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);
 Route::post('groupSMS', [ProfileController::class, 'groupSMS']);
+Route::get('inbox', [ProfileController::class, 'inbox']);

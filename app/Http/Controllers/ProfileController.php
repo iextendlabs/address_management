@@ -271,7 +271,7 @@ class ProfileController extends Controller
                     return back()->withErrors(['fail'=>$e->getMessage()]);
                 }
 
-            return back()->with('success','Message successfully Send.');
+            return back()->with('success','The message was sent successfully.');
     }
         
     public function receiveSMS(Request $request){
@@ -315,9 +315,9 @@ class ProfileController extends Controller
                     $sms->type = 'send';
                     $sms->save();
             } catch (\Exception $e) {
-                return back()->withErrors(['fail'=>$e->getMessage()]);
+                return redirect()->route('profiles.index')->withErrors(['fail'=>$e->getMessage()]);
             }
         }
-        return back()->with('success','Message successfully Send.');
+        return redirect()->route('profiles.index')->with('success','The message was sent successfully.');
     }
 }

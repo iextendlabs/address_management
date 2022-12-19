@@ -38,10 +38,27 @@
             </ul>
         </div>
     @endif
-    <form action="{{url('/groupSMS')}}" method="POST" id="sms" class="form-group">
-    <div id="smsButton" style="display:none; padding: 10px;">
-        <textarea name="message" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 100px; width: 500px;"></textarea>
-        <button type="submit" form="sms" class="btn btn-info" style="margin: 15px;">SMS</button>
+    <form action="{{url('/campaignSMS')}}" method="POST" id="sms" class="form-group">
+    <div id="smsButton" style="display: none; padding: 10px;">
+        <div class="row">
+            <div class="col-xs-5 col-sm-5 col-md-5">
+                <div class="form-group" style="padding-bottom: 20px;">
+                    <strong>Campaigns:</strong>
+                    <select name="campaign" id="campaign" class="form-control">
+                        @if(isset($campaigns))
+                        @foreach($campaigns as $campaign)
+                        <option value="{{ $campaign->id }}">{{ $campaign->title }}</option>
+                        @endforeach
+                        @endif
+                    </select>
+                </div>
+                <div class="form-group">
+                    <strong>Message:</strong>
+                    <textarea name="message" rows="5" class="form-control" placeholder="Message"></textarea>
+                </div>
+                <button type="submit" form="sms" class="btn btn-info" style="margin: 15px;">SMS</button>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-9 margin-tb">

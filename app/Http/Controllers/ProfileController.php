@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use App\Models\Addresses;
 use App\Models\sms;
+use App\Models\Campaign;
+use App\Models\CampaignRecipient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
@@ -49,9 +51,11 @@ class ProfileController extends Controller
                 'country' => 'Country',
                 'postcode_zipcode' => 'Postcode \ ZipCode',
             );
+
+            $campaigns = Campaign::all();
             
             $profiles = Profile::latest()->paginate(5);
-            return view('profiles.index',compact('profiles','fields'))
+            return view('profiles.index',compact('profiles','fields','campaigns'))
                 ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -94,7 +98,9 @@ class ProfileController extends Controller
                 'value' => $request->value,
             ];
 
-            return view('profiles.index',compact('profiles','old_data','fields'))
+            $campaigns = Campaign::all();
+
+            return view('profiles.index',compact('profiles','old_data','fields','campaigns'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
             
     }
@@ -290,13 +296,13 @@ class ProfileController extends Controller
             $response->message('Your SMS successfully send.');
     }
 
-    public function groupSMS(Request $request){
+    public function campaignSMS(Request $request){
         
         request()->validate([
+            'campaign' => 'required',
             'message' => 'required',
             'ids' => 'required'
         ]);
-        $sms = new sms;
 
         $account_sid = getenv("TWILIO_SID");
         $auth_token = getenv("TWILIO_AUTH_TOKEN");
@@ -309,11 +315,20 @@ class ProfileController extends Controller
                     $client->messages->create($profile->phoneMobile, 
                     ['from' => $twilio_number, 'body' => $request->message] );
                    
+                    $sms = new sms;
+                    
                     $sms->profile_id = $id;
                     $sms->body = $request->message;
                     $sms->status = 'success';
                     $sms->type = 'send';
                     $sms->save();
+                    
+                    $campaign_recipient = new CampaignRecipient;
+
+                    $campaign_recipient->recipient_id = $id;
+                    $campaign_recipient->campaign_id = $request->campaign;
+                    $campaign_recipient->save();
+
             } catch (\Exception $e) {
                 return redirect()->route('profiles.index')->withErrors(['fail'=>$e->getMessage()]);
             }

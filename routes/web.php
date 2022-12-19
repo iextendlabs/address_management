@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CampaignController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +31,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('profiles', ProfileController::class);
+    Route::resource('campaigns', CampaignController::class);
 });
+
 Route::get('/profileDestroy/{id}',[ProfileController::class,'destroy']);
 Route::post('/filter',[ProfileController::class,'filter']);
 Route::get('/sms/{id}',[ProfileController::class,'sms']);
 Route::post('sendSMS',[ProfileController::class,'sendSMS']);
 Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);
-Route::post('groupSMS', [ProfileController::class, 'groupSMS']);
+Route::post('campaignSMS', [ProfileController::class, 'campaignSMS']);
 Route::get('inbox', [ProfileController::class, 'inbox']);

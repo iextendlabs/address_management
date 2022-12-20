@@ -7,7 +7,7 @@ use App\Models\Addresses;
 use App\Models\sms;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
-use App\Models\CampaignSMS;
+use App\Models\CampaignSms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
@@ -310,7 +310,7 @@ class ProfileController extends Controller
         $twilio_number = getenv("TWILIO_NUMBER");
         $client = new Client($account_sid, $auth_token);
         
-        $CampaignSMS = new CampaignSMS;
+        $CampaignSMS = new CampaignSms;
 
         foreach($request->ids as $id){
             try {

@@ -41,3 +41,6 @@ Route::post('sendSMS',[ProfileController::class,'sendSMS']);
 Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);
 Route::post('campaignSMS', [ProfileController::class, 'campaignSMS']);
 Route::get('inbox', [ProfileController::class, 'inbox']);
+
+Route::get('/campaignView/{id}', [CampaignController::class, 'view']);
+

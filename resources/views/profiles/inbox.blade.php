@@ -17,12 +17,12 @@
         </div>
     </div><hr>
     <div class="row">
-        <div class="col-lg-12 margin-tb">
+        <div class="col-lg-7 margin-tb">
             <table class="table table-bordered">
                 @if(($data))
                 @foreach ($data as $single_data)
                 <tr>
-                    <td><a href="sms/{{ $single_data['profile_id'] }}"><span style="font-weight: bolder; font-size: large; padding: 20px;">{{ $single_data['profile'] }}</span></a><br>
+                    <td><a href="sms/{{ $single_data['profile_id'] }}"><span style="font-weight: bolder; font-size: large; padding: 20px;">{{ $single_data['profile'] }}</span></a><br><span class="float-end" style="font-size: small;">{{ $single_data['date'] }}</span>
                         <span style="padding-left: 40px; color: #595c5e;">{{ $single_data['sms'] }}</span>
                     </td>
                 </tr>

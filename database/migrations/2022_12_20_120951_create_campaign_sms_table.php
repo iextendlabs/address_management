@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('campaign_recipients', function (Blueprint $table) {
+        Schema::create('campaign_sms', function (Blueprint $table) {
             $table->id();
             $table->string('campaign_id')->nullable();
-            $table->string('campaign_sms_id')->nullable();
-            $table->string('recipient_id')->nullable();
+            $table->string('sms_body')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('campaign_recipients');
+        Schema::dropIfExists('campaign_sms');
     }
 };

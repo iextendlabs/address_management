@@ -7,6 +7,7 @@ use App\Models\Addresses;
 use App\Models\sms;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
+use App\Models\CampaignSMS;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
@@ -165,7 +166,7 @@ class ProfileController extends Controller
      */
     public function show(Profile $profile){
             
-            $address = Profile::find($profile->id)->getAddresses;;
+            $address = Profile::find($profile->id)->getAddresses;
 
             return view('profiles.show',compact('profile','address'));
     }
@@ -177,7 +178,7 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Profile $profile){
-            $address = Profile::find($profile->id)->getAddresses;;
+            $address = Profile::find($profile->id)->getAddresses;
 
             return view('profiles.edit',compact('profile','address'));
     }
@@ -309,6 +310,8 @@ class ProfileController extends Controller
         $twilio_number = getenv("TWILIO_NUMBER");
         $client = new Client($account_sid, $auth_token);
         
+        $CampaignSMS = new CampaignSMS;
+
         foreach($request->ids as $id){
             try {
                     $profile = Profile::find($id);
@@ -322,12 +325,21 @@ class ProfileController extends Controller
                     $sms->status = 'success';
                     $sms->type = 'send';
                     $sms->save();
-                    
+
+                    $CampaignSMS->campaign_id = $request->campaign;
+                    $CampaignSMS->sms_body = $request->message;
+                    $CampaignSMS->save();
+                    $campaign_id = $CampaignSMS->id;
+
                     $campaign_recipient = new CampaignRecipient;
 
                     $campaign_recipient->recipient_id = $id;
                     $campaign_recipient->campaign_id = $request->campaign;
+                    $campaign_recipient->campaign_sms_id = $campaign_id;
                     $campaign_recipient->save();
+                   
+                    
+
 
             } catch (\Exception $e) {
                 return redirect()->route('profiles.index')->withErrors(['fail'=>$e->getMessage()]);
@@ -346,7 +358,8 @@ class ProfileController extends Controller
                 $data[] = array(
                     'profile_id'     =>$profile->id,
                     'profile'        => $profile->firstName.' '.$profile->lastName,
-                    'sms'            => $sms->body
+                    'sms'            => $sms->body,
+                    'date'            => $sms->created_at
                 );
             }
             

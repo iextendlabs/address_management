@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
     
 use App\Models\Campaign;
+use App\Models\CampaignRecipient;
+use App\Models\CampaignSms;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
     
 class CampaignController extends Controller
 { 
@@ -62,7 +65,11 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Campaign $campaign){
-        return view('campaigns.show',compact('campaign'));
+        $campaignSMS = Campaign::find($campaign->id)->getCampaignSMS;
+
+        $recipients = CampaignRecipient::leftJoin('profiles', 'campaign_recipients.recipient_id', '=', 'profiles.id')->get();
+
+        return view('campaigns.show',compact('campaign','campaignSMS','recipients'));
     }
     
     /**
@@ -100,6 +107,10 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Campaign $campaign){
+        CampaignRecipient::where('campaign_id',$campaign->id)->delete();
+        
+        CampaignSms::where('campaign_id',$campaign->id)->delete();
+        
         $campaign->delete();
     
         return redirect()->route('campaigns.index')

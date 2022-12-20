@@ -12,4 +12,8 @@ class Campaign extends Model
     protected $fillable = [
         'title'
     ];
+
+    public function getCampaignSMS(){
+        return $this->hasMany('App\Models\CampaignSms');
+    }
 }

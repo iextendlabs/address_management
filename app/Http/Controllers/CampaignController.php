@@ -38,7 +38,7 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        return view('Campaigns.create');
+        return view('campaigns.create');
     }
     
     /**

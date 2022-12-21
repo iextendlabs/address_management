@@ -45,10 +45,10 @@
                                 </li>
                             @endif
                         @else
-                            <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
-                            <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
-                            <li><a class="nav-link" href="{{ route('campaigns.index') }}">Manage Campaign</a></li>
-                            <li><a class="nav-link" href="{{ route('profiles.index') }}">Manage Profile</a></li>
+                            <li><a class="nav-link" href="{{ route('users.index') }}">Users</a></li>
+                            <li><a class="nav-link" href="{{ route('roles.index') }}">Roles</a></li>
+                            <li><a class="nav-link" href="{{ route('campaigns.index') }}">Campaigns</a></li>
+                            <li><a class="nav-link" href="{{ route('profiles.index') }}">Profiles</a></li>
                             @can('profile-sms')<li><a class="nav-link" href="{{url('/inbox')}}">Inbox</a></li>@endcan
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

@@ -38,34 +38,11 @@
             </ul>
         </div>
     @endif
-    <form action="{{url('/campaignSMS')}}" method="POST" id="sms" class="form-group">
-    <div id="smsButton" style="display: none; padding: 10px;">
-        <div class="row">
-            <div class="col-xs-5 col-sm-5 col-md-5">
-                <div class="form-group" style="padding-bottom: 20px;">
-                    <strong>Campaigns:</strong>
-                    <select name="campaign" id="campaign" class="form-control">
-                        @if(isset($campaigns))
-                        @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">{{ $campaign->title }}</option>
-                        @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="form-group">
-                    <strong>Message:</strong>
-                    <textarea name="message" rows="5" class="form-control" placeholder="Message"></textarea>
-                </div>
-                <button type="submit" form="sms" class="btn btn-info" style="margin: 15px;">SMS</button>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-lg-9 margin-tb">
             @csrf
             <table class="table table-bordered">
                 <tr>
-                    @can('profile-sms')<th></th>@endcan
                     <th>No</th>
                     <th>First Name</th>
                     <th>Last Name</th>
@@ -73,11 +50,6 @@
                 </tr>
                 @foreach ($profiles as $profile)
                 <tr>
-                    @can('profile-sms')
-                    <th>
-                        <input type="checkbox" name="ids[{{ $i }}]" class="smsId" value="{{ $profile->id }}">
-                    </th>
-                    @endcan
                     <td>{{ ++$i }}</td>
                     <td>{{ $profile->firstName }}</td>
                     <td>{{ $profile->lastName }}</td>
@@ -97,7 +69,6 @@
                 </tr>
                 @endforeach
             </table>
-            </form>
             {!! $profiles->links() !!}
         </div>
         <div class="col-lg-3 margin-tb" style="border: 1px solid #dee2e6; border-radius: 10px; padding-top: 10px; ">
@@ -133,12 +104,4 @@
             </form>
         </div>
     </div>
-    
-<script>
-    $(document).ready(function(){
-    $(".smsId").click(function(){
-        $('#smsButton').css('display','inline')
-    });
-    });
-</script>
 @endsection

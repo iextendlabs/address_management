@@ -234,6 +234,8 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id){
+            CampaignRecipient::where('recipient_id',$id)->delete();
+        
             Profile::find($id)->delete();
            
             Addresses::where('profile_id',$id)->delete();
@@ -295,57 +297,6 @@ class ProfileController extends Controller
             $sms->save();
 
             $response->message('Your SMS successfully send.');
-    }
-
-    public function campaignSMS(Request $request){
-        
-        request()->validate([
-            'campaign' => 'required',
-            'message' => 'required',
-            'ids' => 'required'
-        ]);
-
-        $account_sid = getenv("TWILIO_SID");
-        $auth_token = getenv("TWILIO_AUTH_TOKEN");
-        $twilio_number = getenv("TWILIO_NUMBER");
-        $client = new Client($account_sid, $auth_token);
-        
-        $CampaignSMS = new CampaignSms;
-
-        foreach($request->ids as $id){
-            try {
-                    $profile = Profile::find($id);
-                    $client->messages->create($profile->phoneMobile, 
-                    ['from' => $twilio_number, 'body' => $request->message] );
-                   
-                    $sms = new sms;
-                    
-                    $sms->profile_id = $id;
-                    $sms->body = $request->message;
-                    $sms->status = 'success';
-                    $sms->type = 'send';
-                    $sms->save();
-
-                    $CampaignSMS->campaign_id = $request->campaign;
-                    $CampaignSMS->sms_body = $request->message;
-                    $CampaignSMS->save();
-                    $campaign_id = $CampaignSMS->id;
-
-                    $campaign_recipient = new CampaignRecipient;
-
-                    $campaign_recipient->recipient_id = $id;
-                    $campaign_recipient->campaign_id = $request->campaign;
-                    $campaign_recipient->campaign_sms_id = $campaign_id;
-                    $campaign_recipient->save();
-                   
-                    
-
-
-            } catch (\Exception $e) {
-                return redirect()->route('profiles.index')->withErrors(['fail'=>$e->getMessage()]);
-            }
-        }
-        return redirect()->route('profiles.index')->with('success','The message was sent successfully.');
     }
 
     public function inbox(){

@@ -58,7 +58,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Message:</strong>
-                        <textarea name="message" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 200px; width: 100%;">{{ old('firstName') }}</textarea>
+                        <textarea name="message" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 200px; width: 100%;"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 15px !important;">

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Models\CampaignSms;
+use App\Models\Profile;
+use App\Models\sms;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Twilio\Rest\Client;
     
 class CampaignController extends Controller
 { 
@@ -38,7 +40,10 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        return view('campaigns.create');
+        $profiles = Profile::all();
+
+        $i = 0;
+        return view('campaigns.create',compact('profiles','i'));
     }
     
     /**
@@ -48,14 +53,57 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
+        
         request()->validate([
             'title' => 'required',
+            'message' => 'required',
+            'ids' => 'required',
         ]);
-    
-        Campaign::create($request->all());
+
+        $Campaign = Campaign::create($request->all());
+        $campaign_id = $Campaign->id;
+
+        $account_sid = getenv("TWILIO_SID");
+        $auth_token = getenv("TWILIO_AUTH_TOKEN");
+        $twilio_number = getenv("TWILIO_NUMBER");
+        $client = new Client($account_sid, $auth_token);
+        
+        $CampaignSMS = new CampaignSms;
+
+        foreach($request->ids as $id){
+            try {
+                
+                    $profile = Profile::find($id);
+                    $client->messages->create($profile->phoneMobile, 
+                    ['from' => $twilio_number, 'body' => $request->message] );
+                   
+                    $sms = new sms;
+                    
+                    $sms->profile_id = $id;
+                    $sms->body = $request->message;
+                    $sms->status = 'success';
+                    $sms->type = 'send';
+                    $sms->save();
+
+                    $CampaignSMS->campaign_id = $campaign_id;
+                    $CampaignSMS->sms_body = $request->message;
+                    $CampaignSMS->save();
+                    $CampaignSMS_id = $CampaignSMS->id;
+
+                    $campaign_recipient = new CampaignRecipient;
+
+                    $campaign_recipient->recipient_id = $id;
+                    $campaign_recipient->campaign_id = $campaign_id;
+                    $campaign_recipient->campaign_sms_id = $CampaignSMS_id;
+                    $campaign_recipient->save();
+
+            } catch (\Exception $e) {
+                return redirect()->route('campaigns.create')->withErrors(['fail'=>$e->getMessage()]);
+            }
+        }
     
         return redirect()->route('campaigns.index')
-                        ->with('success','Campaign created successfully.');
+                        ->with('success','Campaign created successfully And the message was sent successfully.');
     }
     
     /**

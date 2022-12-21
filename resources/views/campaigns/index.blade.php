@@ -18,6 +18,12 @@
             <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if ($message = Session::get('fail'))
+        <div class="alert alert-danger">
+            <span>{{ $message }}</span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <table class="table table-bordered">
         <tr>
             <th>No</th>

@@ -60,9 +60,9 @@
                         </tr>
                         @foreach ($profiles as $profile)
                         <tr>
-                            <th>
+                            <td>
                                 <input type="checkbox" name="ids[{{ ++$i }}]" class="smsId" value="{{ $profile->id }}">
-                            </th>
+                            </td>
                             <td>{{ $profile->firstName }} {{ $profile->lastName }}</td>
                             <td>{{ $profile->phoneMobile }}</td>
                         </tr>
@@ -86,9 +86,13 @@ $(document).ready(function(){
 
             $row = $(this);
 
-            var id = $row.find("td:first").text().toLowerCase();
+            var name = $row.find("td:first").next().text().toLowerCase();
 
-            if (id.indexOf(value) != -1) {
+            var number = $row.find("td:last").text().toLowerCase();
+
+            if (name.indexOf(value) != -1) {
+                $(this).show();
+            }else if(number.indexOf(value) != -1) {
                 $(this).show();
             }
         });

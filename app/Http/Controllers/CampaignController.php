@@ -72,7 +72,6 @@ class CampaignController extends Controller
 
         foreach($request->ids as $id){
             try {
-                
                     $profile = Profile::find($id);
                     $client->messages->create($profile->phoneMobile, 
                     ['from' => $twilio_number, 'body' => $request->message] );
@@ -98,7 +97,7 @@ class CampaignController extends Controller
                     $campaign_recipient->save();
 
             } catch (\Exception $e) {
-                return redirect()->route('campaigns.create')->withErrors(['fail'=>$e->getMessage()]);
+                return redirect()->route('campaigns.index')->withErrors(['fail'=>$e->getMessage()]);
             }
         }
     

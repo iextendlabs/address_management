@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
     
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
-use App\Models\CampaignSms;
 use App\Models\Profile;
 use App\Models\sms;
 use Illuminate\Http\Request;
@@ -56,7 +55,7 @@ class CampaignController extends Controller
         
         request()->validate([
             'title' => 'required',
-            'message' => 'required',
+            'sms_body' => 'required',
             'ids' => 'required',
         ]);
 
@@ -68,32 +67,25 @@ class CampaignController extends Controller
         $twilio_number = getenv("TWILIO_NUMBER");
         $client = new Client($account_sid, $auth_token);
         
-        $CampaignSMS = new CampaignSms;
-
         foreach($request->ids as $id){
             try {
                     $profile = Profile::find($id);
                     $client->messages->create($profile->phoneMobile, 
-                    ['from' => $twilio_number, 'body' => $request->message] );
-                   
+                    ['from' => $twilio_number, 'body' => $request->sms_body] );
+
                     $sms = new sms;
                     
                     $sms->profile_id = $id;
-                    $sms->body = $request->message;
+                    $sms->body = $request->sms_body;
                     $sms->status = 'success';
                     $sms->type = 'send';
+                    $sms->campaign_id = $campaign_id;
                     $sms->save();
-
-                    $CampaignSMS->campaign_id = $campaign_id;
-                    $CampaignSMS->sms_body = $request->message;
-                    $CampaignSMS->save();
-                    $CampaignSMS_id = $CampaignSMS->id;
 
                     $campaign_recipient = new CampaignRecipient;
 
                     $campaign_recipient->recipient_id = $id;
                     $campaign_recipient->campaign_id = $campaign_id;
-                    $campaign_recipient->campaign_sms_id = $CampaignSMS_id;
                     $campaign_recipient->save();
 
             } catch (\Exception $e) {
@@ -112,11 +104,18 @@ class CampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Campaign $campaign){
-        $campaignSMS = Campaign::find($campaign->id)->getCampaignSMS;
-
         $recipients = CampaignRecipient::leftJoin('profiles', 'campaign_recipients.recipient_id', '=', 'profiles.id')->get();
+        
+        $results = sms::select('body', sms::raw('count(*) as total'))
+        ->groupBy('body')->where('campaign_id',$campaign->id)->WHERE('type','receive')
+        ->get();
+        
+        foreach($results as $result){
+            $body[] =  $result->body;
+            $total[] = $result->total;
+        }
 
-        return view('campaigns.show',compact('campaign','campaignSMS','recipients'));
+        return view('campaigns.show',compact('campaign','recipients','body','total'));
     }
     
     /**
@@ -155,12 +154,40 @@ class CampaignController extends Controller
      */
     public function destroy(Campaign $campaign){
         CampaignRecipient::where('campaign_id',$campaign->id)->delete();
-        
-        CampaignSms::where('campaign_id',$campaign->id)->delete();
+
+        sms::where('campaign_id',$campaign->id)->delete();
         
         $campaign->delete();
     
         return redirect()->route('campaigns.index')
                         ->with('success','Campaign deleted successfully');
     }
+
+    public function campaignInbox(){
+        $data = array();
+        $campaigns = Campaign::latest('created_at','desc')->get();
+
+        foreach($campaigns as $campaign){
+            $sms = sms::where('campaign_id',$campaign->id)->latest('created_at','desc')->first();
+            if(isset($sms)){
+                $data[] = array(
+                    'campaign_id'     =>$campaign->id,
+                    'campaign'        => $campaign->title,
+                    'sms'            => $sms->body,
+                    'date'            => $campaign->created_at
+                );
+            }
+            
+        }
+        
+        return view('campaigns.inbox',compact('data'));
+    }
+
+    public function chat($id){
+        $campaign = Campaign::find($id);
+        $sms = sms::leftJoin('profiles', 'sms.profile_id', '=', 'profiles.id')
+        ->where('sms.campaign_id', $id)->where('sms.type','receive')->orderBy('sms.created_at', 'desc')->get();
+
+        return view('campaigns.sms',compact('sms','campaign'));
+}
 }

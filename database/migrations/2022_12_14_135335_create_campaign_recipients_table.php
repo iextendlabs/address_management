@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('campaign_recipients', function (Blueprint $table) {
             $table->id();
             $table->string('campaign_id')->nullable();
-            $table->string('campaign_sms_id')->nullable();
             $table->string('recipient_id')->nullable();
             $table->timestamps();
         });

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('body')->nullable();
             $table->string('type')->nullable();
             $table->string('status')->nullable();
+            $table->string('campaign_id')->nullable();
             $table->timestamps();
         });
     }

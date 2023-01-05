@@ -10,10 +10,6 @@ class Campaign extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title'
+        'title','sms_body'
     ];
-
-    public function getCampaignSMS(){
-        return $this->hasMany('App\Models\CampaignSms');
-    }
 }

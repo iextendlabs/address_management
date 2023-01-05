@@ -7,12 +7,11 @@ use App\Models\Addresses;
 use App\Models\sms;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
-use App\Models\CampaignSms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
 use Twilio\TwiML\MessagingResponse;
-
+use Illuminate\Support\Str;
 class ProfileController extends Controller
 { 
     /**
@@ -287,13 +286,20 @@ class ProfileController extends Controller
             $sms = new sms;
 
             $response = new MessagingResponse();
-
-            $profile = Profile::where('phoneMobile',$request->From)->first();
             
+            $profile = Profile::where('phoneMobile',$request->From)->first();
+            $campaign = Campaign::leftJoin('campaign_recipients', 'campaigns.id', '=', 'campaign_recipients.campaign_id')
+            ->where('campaigns.sms_body', 'like', '%'.$request->Body.'%' )
+            ->where('campaign_recipients.recipient_id',$profile->id)
+            ->latest('campaigns.created_at','desc')->first();
+            
+            if(isset($campaign)){
+                $sms->campaign_id = $campaign->campaign_id;
+            }
             $sms->profile_id = $profile->id;
             $sms->body = $request->Body;
             $sms->status = 'success';
-            $sms->type = $request->SmsStatus;
+            $sms->type = 'receive';
             $sms->save();
 
             $response->message('Your SMS successfully send.');

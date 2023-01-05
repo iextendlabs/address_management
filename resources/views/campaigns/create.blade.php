@@ -45,7 +45,7 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Message:</strong>
-                    <textarea name="message" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 200px; width: 100%;">{{ old('message') }}</textarea>
+                    <textarea name="sms_body" cols="30" rows="10" class="form-control" placeholder="Message" style="height: 200px; width: 100%;">{{ old('message') }}</textarea>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">

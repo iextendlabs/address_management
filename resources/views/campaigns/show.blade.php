@@ -36,6 +36,7 @@
             </div>
         </div>
     </div><hr>
+    @if(isset($body))
     <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 <script>
     var xValues = @json($body);
@@ -65,4 +66,5 @@
     }
     });
 </script>
+@endif
 @endsection

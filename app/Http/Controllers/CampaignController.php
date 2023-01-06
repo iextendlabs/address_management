@@ -110,17 +110,14 @@ class CampaignController extends Controller
         ->groupBy('body')->where('campaign_id',$campaign->id)->WHERE('type','receive')
         ->get();
         
-        if($results==false){
+        if(count($results)>0){
             foreach($results as $result){
                 $body[] =  $result->body;
                 $total[] = $result->total;
             }
-        
             return view('campaigns.show',compact('campaign','recipients','body','total'));
-
         }else{
             return view('campaigns.show',compact('campaign','recipients'));
-
         }
 
     }

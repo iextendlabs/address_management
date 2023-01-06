@@ -167,26 +167,6 @@ class CampaignController extends Controller
                         ->with('success','Campaign deleted successfully');
     }
 
-    public function campaignInbox(){
-        $data = array();
-        $campaigns = Campaign::latest('created_at','desc')->get();
-
-        foreach($campaigns as $campaign){
-            $sms = sms::where('campaign_id',$campaign->id)->latest('created_at','desc')->first();
-            if(isset($sms)){
-                $data[] = array(
-                    'campaign_id'     =>$campaign->id,
-                    'campaign'        => $campaign->title,
-                    'sms'            => $sms->body,
-                    'date'            => $campaign->created_at
-                );
-            }
-            
-        }
-        
-        return view('campaigns.inbox',compact('data'));
-    }
-
     public function chat($id){
         $campaign = Campaign::find($id);
         $sms = sms::leftJoin('profiles', 'sms.profile_id', '=', 'profiles.id')

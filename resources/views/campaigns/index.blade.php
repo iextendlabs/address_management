@@ -9,6 +9,7 @@
                 @can('campaign-create')
                 <a class="btn btn-success" href="{{ route('campaigns.create') }}"> Create New Campaign</a>
                 @endcan
+                <a class="btn btn-primary" href="{{url('/sms_response')}}">SMS Responses</a>
             </div>
         </div>
     </div><hr>

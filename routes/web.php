@@ -37,12 +37,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/filter',[ProfileController::class,'filter']);
     Route::get('/sms/{id}',[ProfileController::class,'sms']);
     Route::post('sendSMS',[ProfileController::class,'sendSMS']);
-    Route::get('receiveSMS', [ProfileController::class, 'receiveSMS']);
-    Route::get('inbox', [ProfileController::class, 'inbox']);
+    Route::get('/receiveSMS', [ProfileController::class, 'receiveSMS']);
+    Route::get('/inbox', [ProfileController::class, 'inbox']);
 
     Route::get('/campaignView/{id}', [CampaignController::class, 'view']);
-    Route::get('campaignInbox', [CampaignController::class, 'campaignInbox']);
     Route::get('/campaignChat/{id}',[CampaignController::class,'chat']);
+    Route::get('/sms_response', [CampaignController::class, 'sms_response']);
+
     });
 
 

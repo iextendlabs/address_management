@@ -7,6 +7,7 @@ use App\Models\Addresses;
 use App\Models\sms;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
+use App\Models\smsResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
@@ -283,6 +284,13 @@ class ProfileController extends Controller
     }
         
     public function receiveSMS(Request $request){
+            
+            $sms_response = new smsResponse();
+            $sms_response->body = $request->Body;
+            $sms_response->from = $request->From;
+            $sms_response->status = $request->SmsStatus;
+            $sms_response->save();
+
             $sms = new sms;
 
             $response = new MessagingResponse();

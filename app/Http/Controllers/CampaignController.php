@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Models\Profile;
 use App\Models\sms;
+use App\Models\smsResponse;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
     
@@ -173,5 +174,11 @@ class CampaignController extends Controller
         ->where('sms.campaign_id', $id)->where('sms.type','receive')->orderBy('sms.created_at', 'desc')->get();
 
         return view('campaigns.sms',compact('sms','campaign'));
-}
+    }
+
+    public function sms_response(){
+        $sms_response = smsResponse::latest()->paginate(5);
+        
+        return view('campaigns.sms_response',compact('sms_response'));
+    }
 }
